@@ -499,6 +499,11 @@ body::before {
   margin-right: 8px;
 }
 
+.generate-btn i {
+  margin-inline-end: 8px;
+  margin-right: 0;
+}
+
 /* Chat section */
 .chatbox {
   margin-top: 2px;
@@ -610,6 +615,73 @@ body::before {
 .chat-form button:focus {
   outline: 2px solid var(--brand-red);
   outline-offset: 2px;
+}
+
+/* RTL support */
+[dir="rtl"] body {
+  direction: rtl;
+}
+
+[dir="rtl"] .workspace-grid {
+  direction: rtl;
+}
+
+[dir="rtl"] .control-panel,
+[dir="rtl"] .catalog-panel,
+[dir="rtl"] .chatbox,
+[dir="rtl"] .selected-products,
+[dir="rtl"] .hero-card,
+[dir="rtl"] .site-header,
+[dir="rtl"] .catalog-header,
+[dir="rtl"] .selected-products-header {
+  text-align: right;
+}
+
+[dir="rtl"] .search-section select,
+[dir="rtl"] .chat-form input {
+  text-align: right;
+}
+
+[dir="rtl"] .products-grid {
+  direction: rtl;
+}
+
+[dir="rtl"] .selected-products-list,
+[dir="rtl"] #selectedProductsList {
+  direction: rtl;
+}
+
+[dir="rtl"] .selected-product-pill {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .selected-product-name {
+  text-align: right;
+}
+
+[dir="rtl"] .chat-form {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .chat-message--assistant {
+  align-self: flex-end;
+}
+
+[dir="rtl"] .chat-message--user {
+  align-self: flex-start;
+}
+
+[dir="rtl"] .chat-sources {
+  align-self: flex-end;
+}
+
+[dir="rtl"] .chat-sources-list {
+  text-align: right;
+}
+
+[dir="rtl"] .generate-btn i {
+  margin-inline-end: 0;
+  margin-inline-start: 8px;
 }
 
 /* Visually hidden */
