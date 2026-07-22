@@ -210,6 +210,36 @@ body::before {
   font-size: clamp(1.8rem, 2.4vw, 2.6rem);
 }
 
+.selected-products-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.clear-btn {
+  border: 1px solid rgba(31, 26, 25, 0.12);
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: color 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.clear-btn:hover:not(:disabled) {
+  color: var(--brand-red);
+  border-color: rgba(255, 0, 59, 0.18);
+  background: rgba(255, 0, 59, 0.06);
+}
+
+.clear-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 .catalog-header {
   display: flex;
   flex-direction: column;
@@ -328,9 +358,46 @@ body::before {
   line-height: 1.35;
 }
 
-.product-card p {
+.product-brand {
   font-size: 0.92rem;
   color: var(--muted);
+}
+
+.product-description-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.product-description {
+  color: var(--ink);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.product-description--expanded {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+
+.product-description-toggle {
+  align-self: flex-start;
+  border: none;
+  background: transparent;
+  color: var(--brand-red);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0;
+  cursor: pointer;
+}
+
+.product-description-toggle:hover {
+  text-decoration: underline;
 }
 
 /* Selected products */
@@ -346,6 +413,44 @@ body::before {
   flex-wrap: wrap;
   gap: 10px;
   min-height: 64px;
+}
+
+.selected-product-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 0, 59, 0.18);
+  background: rgba(255, 0, 59, 0.08);
+  color: var(--ink);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.selected-product-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.selected-product-remove {
+  border: none;
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--ink);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  flex-shrink: 0;
+  line-height: 1;
+  font-size: 1rem;
+}
+
+.selected-product-remove:hover {
+  background: rgba(255, 0, 59, 0.12);
+  color: var(--brand-red);
 }
 
 .generate-btn {

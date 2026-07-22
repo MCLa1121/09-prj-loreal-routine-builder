@@ -5,9 +5,11 @@ const selectedProductsList = document.getElementById("selectedProductsList");
 const chatForm = document.getElementById("chatForm");
 const chatWindow = document.getElementById("chatWindow");
 const generateRoutineButton = document.getElementById("generateRoutine");
+const clearSelectionsButton = document.getElementById("clearSelections");
 
 /* Replace this placeholder with the class-hosted Cloudflare Worker URL. */
 const workerUrl = "https://loreal-routine.your-subdomain.workers.dev/";
+const selectedProductsStorageKey = "loreal-selected-products";
 
 /* Keep the conversation history so follow-up questions stay in context. */
 const conversationMessages = [
@@ -21,6 +23,46 @@ const conversationMessages = [
 /* Keep product data and selected products in memory */
 let allProducts = [];
 const selectedProductIds = new Set();
+const expandedProductIds = new Set();
+
+/* Escape text before putting it into innerHTML. */
+function escapeHtml(text) {
+  return String(text)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+/* Restore selected products after a page reload. */
+function loadSavedSelections() {
+  const savedSelections = localStorage.getItem(selectedProductsStorageKey);
+
+  if (!savedSelections) {
+    return;
+  }
+
+  try {
+    const savedIds = JSON.parse(savedSelections);
+
+    if (Array.isArray(savedIds)) {
+      savedIds.forEach((productId) => {
+        selectedProductIds.add(Number(productId));
+      });
+    }
+  } catch (error) {
+    localStorage.removeItem(selectedProductsStorageKey);
+  }
+}
+
+/* Save the current selection to localStorage. */
+function saveSelections() {
+  localStorage.setItem(
+    selectedProductsStorageKey,
+    JSON.stringify([...selectedProductIds]),
+  );
+}
 
 /* Show initial placeholder until user selects a category */
 productsContainer.innerHTML = `
@@ -43,6 +85,18 @@ chatWindow.innerHTML = `
   </div>
 `;
 
+/* Load products, restore selections, and render the saved state. */
+async function initializeApp() {
+  await loadProducts();
+  loadSavedSelections();
+  renderSelectedProducts();
+  renderVisibleProducts();
+  updateClearButtonState();
+}
+
+/* Run the first render as soon as the file loads. */
+initializeApp();
+
 /* Load product data from JSON file */
 async function loadProducts() {
   if (allProducts.length > 0) {
@@ -64,8 +118,33 @@ function toggleProductSelection(productId) {
     selectedProductIds.add(productId);
   }
 
+  saveSelections();
   renderSelectedProducts();
   renderVisibleProducts();
+  updateClearButtonState();
+}
+
+/* Remove a single product from the selection. */
+function removeSelectedProduct(productId) {
+  selectedProductIds.delete(productId);
+  saveSelections();
+  renderSelectedProducts();
+  renderVisibleProducts();
+  updateClearButtonState();
+}
+
+/* Clear every selected product at once. */
+function clearSelectedProducts() {
+  selectedProductIds.clear();
+  saveSelections();
+  renderSelectedProducts();
+  renderVisibleProducts();
+  updateClearButtonState();
+}
+
+/* Keep the clear button in sync with the current selection state. */
+function updateClearButtonState() {
+  clearSelectionsButton.disabled = selectedProductIds.size === 0;
 }
 
 /* Get the products from the currently selected category */
@@ -98,7 +177,15 @@ function renderSelectedProducts() {
     .map(
       (product) => `
         <div class="selected-product-pill" data-product-id="${product.id}">
-          <span class="selected-product-name">${product.brand} · ${product.name}</span>
+          <span class="selected-product-name">${escapeHtml(product.brand)} · ${escapeHtml(product.name)}</span>
+          <button
+            type="button"
+            class="selected-product-remove"
+            data-remove-product-id="${product.id}"
+            aria-label="Remove ${product.brand} ${product.name}"
+          >
+            ×
+          </button>
         </div>
       `,
     )
@@ -129,6 +216,17 @@ function buildSelectionContextMessage() {
   }
 
   return `Current selected products:\n${buildSelectedProductSummary(selectedProducts)}`;
+}
+
+/* Make a description shorter for the preview text on each card. */
+function getDescriptionPreview(description) {
+  const previewLimit = 110;
+
+  if (description.length <= previewLimit) {
+    return description;
+  }
+
+  return `${description.slice(0, previewLimit).trim()}...`;
 }
 
 /* Add a message bubble to the chat window */
@@ -259,10 +357,24 @@ function displayProducts(products) {
       tabindex="0"
       aria-pressed="${selectedProductIds.has(product.id)}"
     >
-      <img src="${product.image}" alt="${product.name}">
+      <img src="${product.image}" alt="${escapeHtml(product.name)}">
       <div class="product-info">
-        <h3>${product.name}</h3>
-        <p>${product.brand}</p>
+        <h3>${escapeHtml(product.name)}</h3>
+        <p class="product-brand">${escapeHtml(product.brand)}</p>
+        <div class="product-description-wrap">
+          <p class="product-description ${expandedProductIds.has(product.id) ? "product-description--expanded" : ""}" id="description-${product.id}">
+            ${escapeHtml(expandedProductIds.has(product.id) ? product.description : getDescriptionPreview(product.description))}
+          </p>
+          <button
+            type="button"
+            class="product-description-toggle"
+            data-description-product-id="${product.id}"
+            aria-expanded="${expandedProductIds.has(product.id)}"
+            aria-controls="description-${product.id}"
+          >
+            ${expandedProductIds.has(product.id) ? "Show less" : "View details"}
+          </button>
+        </div>
       </div>
     </div>
   `,
@@ -285,6 +397,23 @@ categoryFilter.addEventListener("change", async (e) => {
   renderSelectedProducts();
 });
 
+/* Update the selected products list when the clear button is clicked. */
+clearSelectionsButton.addEventListener("click", () => {
+  clearSelectedProducts();
+});
+
+/* Remove an individual selected product when its pill button is clicked. */
+selectedProductsList.addEventListener("click", (e) => {
+  const removeButton = e.target.closest(".selected-product-remove");
+
+  if (!removeButton) {
+    return;
+  }
+
+  const productId = Number(removeButton.dataset.removeProductId);
+  removeSelectedProduct(productId);
+});
+
 /* Generate a personalized routine when the button is clicked */
 generateRoutineButton.addEventListener("click", async () => {
   if (allProducts.length === 0) {
@@ -296,6 +425,22 @@ generateRoutineButton.addEventListener("click", async () => {
 
 /* Let users click a product card to select or unselect it */
 productsContainer.addEventListener("click", (e) => {
+  const descriptionToggle = e.target.closest(".product-description-toggle");
+
+  if (descriptionToggle) {
+    e.stopPropagation();
+    const productId = Number(descriptionToggle.dataset.descriptionProductId);
+
+    if (expandedProductIds.has(productId)) {
+      expandedProductIds.delete(productId);
+    } else {
+      expandedProductIds.add(productId);
+    }
+
+    renderVisibleProducts();
+    return;
+  }
+
   const productCard = e.target.closest(".product-card");
 
   if (!productCard) {
@@ -308,6 +453,22 @@ productsContainer.addEventListener("click", (e) => {
 
 /* Support keyboard selection for accessibility */
 productsContainer.addEventListener("keydown", (e) => {
+  const descriptionToggle = e.target.closest(".product-description-toggle");
+
+  if (descriptionToggle && (e.key === "Enter" || e.key === " ")) {
+    e.preventDefault();
+    const productId = Number(descriptionToggle.dataset.descriptionProductId);
+
+    if (expandedProductIds.has(productId)) {
+      expandedProductIds.delete(productId);
+    } else {
+      expandedProductIds.add(productId);
+    }
+
+    renderVisibleProducts();
+    return;
+  }
+
   const productCard = e.target.closest(".product-card");
 
   if (!productCard) {
