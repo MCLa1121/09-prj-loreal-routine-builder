@@ -8,7 +8,7 @@ const generateRoutineButton = document.getElementById("generateRoutine");
 const clearSelectionsButton = document.getElementById("clearSelections");
 
 /* Replace this placeholder with the class-hosted Cloudflare Worker URL. */
-const workerUrl = "https://loreal-routine.your-subdomain.workers.dev/";
+const workerUrl = "https://lorealbot.ericwu20011213.workers.dev";
 const selectedProductsStorageKey = "loreal-selected-products";
 
 /* Keep the conversation history so follow-up questions stay in context. */
