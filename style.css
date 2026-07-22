@@ -84,10 +84,9 @@ body::before {
 /* Hero */
 .hero-card,
 .control-panel,
-.catalog-panel,
-.chatbox,
-.selected-products {
-  background: var(--surface);
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    cursor: pointer;
+    position: relative;
   border: 1px solid var(--border);
   border-radius: 28px;
   box-shadow: var(--shadow);
