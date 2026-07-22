@@ -258,6 +258,30 @@ body::before {
   display: flex;
 }
 
+.search-section--search {
+  margin-bottom: 8px;
+}
+
+.search-section--search input {
+  width: 100%;
+  padding: 16px 18px;
+  font-size: 1rem;
+  border: 1px solid rgba(31, 26, 25, 0.14);
+  border-radius: 18px;
+  background-color: rgba(255, 255, 255, 0.92);
+  color: var(--ink);
+}
+
+.search-section--search input::placeholder {
+  color: #8b807a;
+}
+
+.search-section--search input:focus {
+  outline: none;
+  border-color: rgba(255, 0, 59, 0.6);
+  box-shadow: 0 0 0 4px rgba(255, 0, 59, 0.12);
+}
+
 .search-section select {
   width: 100%;
   padding: 16px 18px;

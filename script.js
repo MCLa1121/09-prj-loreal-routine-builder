@@ -1,4 +1,5 @@
 /* Get references to DOM elements */
+const productSearch = document.getElementById("productSearch");
 const categoryFilter = document.getElementById("categoryFilter");
 const productsContainer = document.getElementById("productsContainer");
 const selectedProductsList = document.getElementById("selectedProductsList");
@@ -24,6 +25,7 @@ const conversationMessages = [
 let allProducts = [];
 const selectedProductIds = new Set();
 const expandedProductIds = new Set();
+let searchQuery = "";
 
 /* Escape text before putting it into innerHTML. */
 function escapeHtml(text) {
@@ -150,12 +152,33 @@ function updateClearButtonState() {
 /* Get the products from the currently selected category */
 function getFilteredProducts() {
   const selectedCategory = categoryFilter.value;
+  const normalizedSearchQuery = searchQuery.trim().toLowerCase();
 
-  if (!selectedCategory) {
+  if (!selectedCategory && !normalizedSearchQuery) {
     return [];
   }
 
-  return allProducts.filter((product) => product.category === selectedCategory);
+  return allProducts.filter((product) => {
+    const matchesCategory =
+      !selectedCategory || product.category === selectedCategory;
+
+    if (!normalizedSearchQuery) {
+      return matchesCategory;
+    }
+
+    const searchableText = [
+      product.name,
+      product.brand,
+      product.category,
+      product.description,
+    ]
+      .join(" ")
+      .toLowerCase();
+
+    const matchesSearch = searchableText.includes(normalizedSearchQuery);
+
+    return matchesCategory && matchesSearch;
+  });
 }
 
 /* Render the selected products list above the button */
@@ -336,7 +359,7 @@ function renderVisibleProducts() {
   if (filteredProducts.length === 0) {
     productsContainer.innerHTML = `
       <div class="placeholder-message">
-        Select a category to view products
+        ${searchQuery.trim() || categoryFilter.value ? "No matching products found" : "Select a category to view products"}
       </div>
     `;
     return;
@@ -384,17 +407,15 @@ function displayProducts(products) {
 
 /* Filter and display products when category changes */
 categoryFilter.addEventListener("change", async (e) => {
-  const products = await loadProducts();
-  const selectedCategory = e.target.value;
-
-  /* filter() creates a new array containing only products 
-     where the category matches what the user selected */
-  const filteredProducts = products.filter(
-    (product) => product.category === selectedCategory,
-  );
-
-  displayProducts(filteredProducts);
+  await loadProducts();
   renderSelectedProducts();
+  renderVisibleProducts();
+});
+
+/* Filter products in real time as the user types. */
+productSearch.addEventListener("input", () => {
+  searchQuery = productSearch.value;
+  renderVisibleProducts();
 });
 
 /* Update the selected products list when the clear button is clicked. */
