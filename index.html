@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>L'Oréal | Smart Routine &amp; Product Advisor</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Montserrat:wght@300;400;500;700&display=swap"
       rel="stylesheet"
     />
     <link
@@ -23,33 +23,70 @@
         <h1 class="site-title">Smart Routine &amp; Product Advisor</h1>
       </header>
 
-      <!-- Category Filter -->
-      <div class="search-section">
-        <select id="categoryFilter">
-          <option value="" disabled selected>Choose a Category</option>
-          <option value="cleanser">Cleansers</option>
-          <option value="moisturizer">Moisturizers & Treatments</option>
-          <option value="haircare">Haircare</option>
-          <option value="makeup">Makeup</option>
-          <option value="hair color">Hair Color</option>
-          <option value="hair styling">Hair Styling</option>
-          <option value="men's grooming">Men's Grooming</option>
-          <option value="suncare">Suncare</option>
-          <option value="fragrance">Fragrance</option>
-        </select>
-      </div>
+      <section class="hero-card" aria-label="Introduction">
+        <div class="hero-copy">
+          <p class="eyebrow">Curated with L'Oréal brand colors</p>
+          <h2>
+            Build a polished routine with beauty products that fit your goals.
+          </h2>
+          <p>
+            Start with a category, choose the products you like, and let the
+            assistant shape a thoughtful routine with clear follow-up guidance.
+          </p>
+        </div>
 
-      <!-- Products Grid -->
-      <div id="productsContainer" class="products-grid"></div>
+        <div class="hero-badges" aria-label="Highlights">
+          <span>Personalized recommendations</span>
+          <span>Routine planning</span>
+          <span>Follow-up chat</span>
+        </div>
+      </section>
 
-      <!-- Selected Products -->
-      <div class="selected-products">
-        <h2>Selected Products</h2>
-        <div id="selectedProductsList"></div>
-        <button id="generateRoutine" class="generate-btn">
-          <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Routine
-        </button>
-      </div>
+      <main class="workspace-grid">
+        <aside class="control-panel">
+          <div class="section-label">Step 1</div>
+          <h2>Choose a category</h2>
+
+          <!-- Category Filter -->
+          <div class="search-section">
+            <select id="categoryFilter">
+              <option value="" disabled selected>Choose a Category</option>
+              <option value="cleanser">Cleansers</option>
+              <option value="moisturizer">Moisturizers & Treatments</option>
+              <option value="haircare">Haircare</option>
+              <option value="makeup">Makeup</option>
+              <option value="hair color">Hair Color</option>
+              <option value="hair styling">Hair Styling</option>
+              <option value="men's grooming">Men's Grooming</option>
+              <option value="suncare">Suncare</option>
+              <option value="fragrance">Fragrance</option>
+            </select>
+          </div>
+
+          <!-- Selected Products -->
+          <div class="selected-products">
+            <div class="section-label">Step 2</div>
+            <h2>Selected Products</h2>
+            <div id="selectedProductsList"></div>
+            <button id="generateRoutine" class="generate-btn">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Routine
+            </button>
+          </div>
+        </aside>
+
+        <section class="catalog-panel" aria-label="Product catalog">
+          <div class="section-label">Step 3</div>
+          <div class="catalog-header">
+            <h2>Browse products</h2>
+            <p>
+              Pick the products you want the assistant to use in your routine.
+            </p>
+          </div>
+
+          <!-- Products Grid -->
+          <div id="productsContainer" class="products-grid"></div>
+        </section>
+      </main>
 
       <!------- Chat Area ------->
       <section class="chatbox">
