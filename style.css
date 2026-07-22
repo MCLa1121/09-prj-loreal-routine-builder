@@ -376,6 +376,13 @@ body::before {
   filter: saturate(1.02);
 }
 
+.generate-btn:disabled {
+  cursor: wait;
+  opacity: 0.8;
+  transform: none;
+  filter: none;
+}
+
 .generate-btn:focus {
   outline: none;
   box-shadow:
@@ -410,6 +417,30 @@ body::before {
   border: 1px solid rgba(31, 26, 25, 0.08);
   border-radius: 20px;
   margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chat-message {
+  max-width: 90%;
+  padding: 14px 16px;
+  border-radius: 18px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.65;
+}
+
+.chat-message--assistant {
+  align-self: flex-start;
+  background: rgba(255, 0, 59, 0.08);
+  border: 1px solid rgba(255, 0, 59, 0.12);
+}
+
+.chat-message--user {
+  align-self: flex-end;
+  background: rgba(227, 165, 53, 0.18);
+  border: 1px solid rgba(227, 165, 53, 0.2);
 }
 
 /* Placeholder message */
